@@ -87,6 +87,8 @@ void USB_Clear_Transmit_Buffer();
  */
 void TIM_USB_Send_PeriodElapsedCallback();
 
+USB_Status USB_Reset_Blocked(uint32_t delay_ms);
+
 
 #endif
 

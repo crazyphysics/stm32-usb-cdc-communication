@@ -22,6 +22,8 @@
 
 /* Private variables ---------------------------------------------------------*/
 
+extern PCD_HandleTypeDef hpcd_USB_OTG_HS;
+
 USB_Rx_Callback g_rx_callback = nullptr;
 
 volatile bool g_tx_process_flag = false;
@@ -115,6 +117,26 @@ USB_Status USB_Transmit_Blocked(uint8_t* Buf, uint16_t Len, uint32_t TimeOut)
 void USB_Clear_Transmit_Buffer()
 {
 	g_tx_buffer.Clear();
+}
+
+USB_Status USB_Reset_Blocked(uint32_t delay_ms)
+{
+	USB_Clear_Transmit_Buffer();
+	g_tx_process_flag = false;
+
+	if (HAL_PCD_Stop(&hpcd_USB_OTG_HS) != HAL_OK)
+	{
+		return USB_Status::Failed;
+	}
+
+	HAL_Delay(delay_ms);
+
+	if (HAL_PCD_Start(&hpcd_USB_OTG_HS) != HAL_OK)
+	{
+		return USB_Status::Failed;
+	}
+
+	return USB_Status::Ok;
 }
 
 /**
